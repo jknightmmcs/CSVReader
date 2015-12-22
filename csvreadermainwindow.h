@@ -15,6 +15,9 @@ public:
     explicit CSVReaderMainWindow(QWidget *parent = 0);
     ~CSVReaderMainWindow();
 
+private slots:
+    void on_actionOpen_triggered();
+
 private:
     Ui::CSVReaderMainWindow *ui;
 };
