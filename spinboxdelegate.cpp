@@ -10,8 +10,7 @@ SpinBoxDelegate::SpinBoxDelegate(QObject *parent)
 QWidget *SpinBoxDelegate::createEditor(QWidget *parent,
     const QStyleOptionViewItem &/* option */,
     const QModelIndex &index) const
-{
-    CSVModel* model = (CSVModel*)(index.model());
+{     
     int data = index.data().toInt();
     QSpinBox *editor = new QSpinBox(parent);
     editor->setFrame(false);

@@ -4,7 +4,6 @@
 #include <string>
 #include <QString>
 #include <QVariant>
-#include "csvmodel.h"
 
 using std::string;
 

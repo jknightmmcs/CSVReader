@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     csvmodel.cpp \
     comboboxdelegate.cpp \
     spinboxdelegate.cpp \
-    textboxdelegate.cpp
+    textboxdelegate.cpp \
+    addcolumndialog.cpp
 
 HEADERS  += csvreadermainwindow.h \     
     csvreader.h \
@@ -28,7 +29,9 @@ HEADERS  += csvreadermainwindow.h \
     csvmodel.h \
     comboboxdelegate.h \
     spinboxdelegate.h \
-    textboxdelegate.h
+    textboxdelegate.h \
+    addcolumndialog.h
 
 FORMS    += csvreadermainwindow.ui \
-    csvreader.ui
+    csvreader.ui \
+    addcolumndialog.ui

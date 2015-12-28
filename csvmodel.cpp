@@ -14,11 +14,13 @@ CSVTableRepresentation *CSVModel::getRepresentation()
 
 int CSVModel::rowCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent);
     return repr_->data.size();
 }
 
 int CSVModel::columnCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent);
     return repr_->header.size();
 }
 
@@ -87,6 +89,11 @@ Qt::ItemFlags CSVModel::flags(const QModelIndex &index) const
     return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
 }
 
+void CSVModel::SetColumnToAdd(CellTypeData toAdd)
+{
+    columnToAdd = toAdd;
+}
+
 bool CSVModel::insertRow(int row, const QModelIndex &parent)
 {
     return insertRows(row, 1, parent);
@@ -99,7 +106,7 @@ bool CSVModel::insertRows(int row, int count, const QModelIndex &parent)
     for(int i = row; i < row + count; i++)
     {
         std::vector<QVariant> newRow;
-        for(int i = 0; i < repr_->header.size(); i++)
+        for(unsigned i = 0; i < repr_->header.size(); i++)
             newRow.push_back(repr_->header[i].defaultValue);
         repr_->data.insert(repr_->data.begin() + i, newRow);
     }
@@ -111,16 +118,15 @@ bool CSVModel::insertRows(int row, int count, const QModelIndex &parent)
 
 bool CSVModel::removeRow(int row, const QModelIndex &parent)
 {
-    removeRows(row, 1, parent);
+    return removeRows(row, 1, parent);
 }
 
 bool CSVModel::removeRows(int row, int count, const QModelIndex &parent)
 {
     beginRemoveRows(parent, row, row + count - 1);
-    for(int i = row; i < row + count; i++)
-    {
-        repr_->data.erase(repr_->data.begin() + i);
-    }
+
+    repr_->data.erase(repr_->data.begin() + row, repr_->data.begin() + row + count);
+
     endRemoveRows();
     emit dataChanged(index(0, 0), index(rowCount(parent), columnCount(parent)));
     emit layoutChanged();
@@ -129,10 +135,39 @@ bool CSVModel::removeRows(int row, int count, const QModelIndex &parent)
 
 bool CSVModel::insertColumn(int column, const QModelIndex &parent)
 {
-    QMessageBox::about(0, "insertcolumn", "insertcolumn");
+    return insertColumns(column, 1, parent);
+}
+
+bool CSVModel::insertColumns(int column, int count, const QModelIndex &parent)
+{
+    Q_UNUSED(count);
+    beginInsertColumns(parent, column, column + 1);
+
+    repr_->header.insert(repr_->header.begin() + column, columnToAdd);
+
+    for(unsigned i = 0; i < repr_->data.size(); i++)
+        repr_->data[i].insert(repr_ -> data[i].begin() + column, columnToAdd.defaultValue);
+
+    endInsertColumns();
+    emit dataChanged(index(0, 0), index(rowCount(parent), columnCount(parent)));
+    emit layoutChanged();
+    return true;
 }
 
 bool CSVModel::removeColumn(int column, const QModelIndex &parent)
 {
-    QMessageBox::about(0, "removecolumn", "removecolumn");
+    return removeColumns(column, 1, parent);
+}
+
+bool CSVModel::removeColumns(int column, int count, const QModelIndex &parent)
+{
+    beginRemoveColumns(parent, column, column + count - 1);
+    repr_->header.erase(repr_->header.begin() + column, repr_->header.begin() + column + count);
+
+    for(unsigned i = 0; i < repr_->data.size(); i++)
+        repr_->data[i].erase(repr_->data[i].begin() + column, repr_->data[i].begin() + column + count);
+    endRemoveColumns();
+    emit dataChanged(index(0, 0), index(rowCount(parent), columnCount(parent)));
+    emit layoutChanged();
+    return true;
 }

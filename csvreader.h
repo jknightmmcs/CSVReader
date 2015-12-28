@@ -17,6 +17,12 @@ public:
     explicit CSVReader(CSVModel *model, QWidget *parent = 0);
     ~CSVReader();
 
+    void SetDelegate(int i, CSVTableRepresentation* repr);
+
+    void SetDelegates();
+public slots:
+    void addColumn(CellTypeData data);
+
 private slots:
     void on_actionLeft_triggered();
 
@@ -28,9 +34,12 @@ private slots:
 
     void on_actionLower_triggered();
 
+    void on_actionRight_triggered();
+
 private:
     Ui::CSVReader *ui;    
     CSVModel* model;
+    CellTypeData ColumnToAdd;
 };
 
 #endif // CSVREADER_H

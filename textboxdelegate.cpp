@@ -10,8 +10,7 @@ TextBoxDelegate::TextBoxDelegate(QObject *parent)
 QWidget *TextBoxDelegate::createEditor(QWidget *parent,
     const QStyleOptionViewItem &/* option */,
     const QModelIndex &index) const
-{
-    CSVModel* model = (CSVModel*)(index.model());
+{    
     QString data = index.data().toString();
     QLineEdit *editor = new QLineEdit(data, parent);
     return editor;
