@@ -26,7 +26,8 @@ class CellTypeData
 {
 public:
     CellType type;
-    std::vector<QString> data; //for enum
+    std::vector<QString> data; //for enum    
+    QVariant defaultValue;
 };
 
 class CSVModel;
@@ -36,9 +37,11 @@ class CSVTableRepresentation
 public:
     CSVTableRepresentation();    
     static CSVTableRepresentation *LoadFromFile(QString fname);
+    QVariant getData(int row, int column);
 
     std::vector<CellTypeData> header;
     std::vector<std::vector<QVariant>> data;
+
     friend class CSVModel;    
 };
 

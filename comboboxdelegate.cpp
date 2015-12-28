@@ -17,9 +17,10 @@ ComboBoxItemDelegate::~ComboBoxItemDelegate()
 QWidget* ComboBoxItemDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     CSVModel* model = (CSVModel*)(index.model());
-    QString data = model->repr_->data[index.row()][index.column()].toString();
+    QString data = model->repr_->getData(index.row(), index.column()).toString();    
     // Create the combobox and populate it
     QComboBox* cb = new QComboBox(parent);
+    cb->setFrame(false);
     int ind = 0;
     for(int i = 0; i < items_.size(); i++)
     {

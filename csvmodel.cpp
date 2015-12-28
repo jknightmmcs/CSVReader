@@ -1,4 +1,6 @@
 #include "csvmodel.h"
+#include <QMessageBox>
+#include <iostream>
 
 CSVModel::CSVModel(CSVTableRepresentation *repr, QObject* parent = 0):QAbstractTableModel(parent)
 {
@@ -49,6 +51,8 @@ QVariant CSVModel::headerData(int section, Qt::Orientation orientation, int role
 
 bool CSVModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
+    if (role != Qt::EditRole)
+        return false;
     int col = index.column();
     int row = index.row();
     QString data = value.toString();
@@ -72,6 +76,7 @@ bool CSVModel::setData(const QModelIndex &index, const QVariant &value, int role
         repr_->data[row][col] = QVariant(ind);
         break;
     }
+    return true;
 }
 
 
@@ -80,4 +85,54 @@ Qt::ItemFlags CSVModel::flags(const QModelIndex &index) const
     if (!index.isValid())
         return Qt::ItemIsEnabled;
     return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
+}
+
+bool CSVModel::insertRow(int row, const QModelIndex &parent)
+{
+    return insertRows(row, 1, parent);
+}
+
+bool CSVModel::insertRows(int row, int count, const QModelIndex &parent)
+{
+    using namespace std;
+    beginInsertRows(parent, row, row + count - 1);
+    for(int i = row; i < row + count; i++)
+    {
+        std::vector<QVariant> newRow;
+        for(int i = 0; i < repr_->header.size(); i++)
+            newRow.push_back(repr_->header[i].defaultValue);
+        repr_->data.insert(repr_->data.begin() + i, newRow);
+    }
+    endInsertRows();
+    emit dataChanged(index(0, 0), index(rowCount(parent), columnCount(parent)));
+    emit layoutChanged();
+    return true;
+}
+
+bool CSVModel::removeRow(int row, const QModelIndex &parent)
+{
+    removeRows(row, 1, parent);
+}
+
+bool CSVModel::removeRows(int row, int count, const QModelIndex &parent)
+{
+    beginRemoveRows(parent, row, row + count - 1);
+    for(int i = row; i < row + count; i++)
+    {
+        repr_->data.erase(repr_->data.begin() + i);
+    }
+    endRemoveRows();
+    emit dataChanged(index(0, 0), index(rowCount(parent), columnCount(parent)));
+    emit layoutChanged();
+    return true;
+}
+
+bool CSVModel::insertColumn(int column, const QModelIndex &parent)
+{
+    QMessageBox::about(0, "insertcolumn", "insertcolumn");
+}
+
+bool CSVModel::removeColumn(int column, const QModelIndex &parent)
+{
+    QMessageBox::about(0, "removecolumn", "removecolumn");
 }

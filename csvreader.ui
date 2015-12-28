@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>CSVReader</class>
- <widget class="QWidget" name="CSVReader">
+ <widget class="QMainWindow" name="CSVReader">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -13,11 +13,87 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
-   <item>
-    <widget class="QTableView" name="tableView"/>
-   </item>
-  </layout>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QTableView" name="tableView">
+      <property name="editTriggers">
+       <set>QAbstractItemView::DoubleClicked</set>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>400</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuColumns">
+    <property name="title">
+     <string>Columns</string>
+    </property>
+    <widget class="QMenu" name="menuAdd">
+     <property name="title">
+      <string>Add</string>
+     </property>
+     <addaction name="actionRight"/>
+     <addaction name="actionLeft"/>
+    </widget>
+    <addaction name="menuAdd"/>
+    <addaction name="actionRemove_selected"/>
+   </widget>
+   <widget class="QMenu" name="menuRows">
+    <property name="title">
+     <string>Rows</string>
+    </property>
+    <widget class="QMenu" name="menuAdd_2">
+     <property name="title">
+      <string>Add</string>
+     </property>
+     <addaction name="actionHigher"/>
+     <addaction name="actionLower"/>
+    </widget>
+    <addaction name="menuAdd_2"/>
+    <addaction name="actionRemove_selected_2"/>
+   </widget>
+   <addaction name="menuColumns"/>
+   <addaction name="menuRows"/>
+  </widget>
+  <action name="actionRight">
+   <property name="text">
+    <string>Right</string>
+   </property>
+  </action>
+  <action name="actionLeft">
+   <property name="text">
+    <string>Left</string>
+   </property>
+  </action>
+  <action name="actionRemove_selected">
+   <property name="text">
+    <string>Remove selected</string>
+   </property>
+  </action>
+  <action name="actionRemove_selected_2">
+   <property name="text">
+    <string>Remove selected</string>
+   </property>
+  </action>
+  <action name="actionHigher">
+   <property name="text">
+    <string>Higher</string>
+   </property>
+  </action>
+  <action name="actionLower">
+   <property name="text">
+    <string>Lower</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

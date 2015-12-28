@@ -11,18 +11,18 @@ QWidget *SpinBoxDelegate::createEditor(QWidget *parent,
     const QStyleOptionViewItem &/* option */,
     const QModelIndex &index) const
 {
-
     CSVModel* model = (CSVModel*)(index.model());
-    int data = model->repr_->data[index.row()][index.column()].toInt();
-
+    int data = index.data().toInt();
     QSpinBox *editor = new QSpinBox(parent);
+    editor->setFrame(false);
+    editor->setValue(data);
     return editor;
 }
 
 void SpinBoxDelegate::setEditorData(QWidget *editor,
                                     const QModelIndex &index) const
 {
-    int value = index.model()->data(index, Qt::EditRole).toInt();
+    int value = index.data().toInt();
 
     QSpinBox *spinBox = static_cast<QSpinBox*>(editor);
     spinBox->setValue(value);

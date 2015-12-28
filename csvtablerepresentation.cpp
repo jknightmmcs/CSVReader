@@ -53,17 +53,27 @@ CSVTableRepresentation* CSVTableRepresentation::LoadFromFile(QString fname)
     {
         CellTypeData cell;
         if (typesList[i] == "string")
+        {
             cell.type = CellType::TypeString;
+            cell.defaultValue = "";
+        }
         else if (typesList[i] == "bool")
+        {
             cell.type = CellType::TypeBool;
+            cell.defaultValue = false;
+        }
         else if (typesList[i] == "int")
+        {
             cell.type = CellType::TypeInt;
+            cell.defaultValue = 0;
+        }
         else if (typesList[i].toStdString().substr(0, 4) == "enum")
         {
             cell.type = CellType::TypeEnum;
             QStringList enumList = typesList[i].split(":");
             for(int j = 1; j < enumList.size(); j++)
                 cell.data.push_back(enumList[j]);
+            cell.defaultValue = 0;
         }
         repr -> header.push_back(cell);
     }
@@ -81,4 +91,14 @@ CSVTableRepresentation* CSVTableRepresentation::LoadFromFile(QString fname)
     }
 
     return repr;
+}
+
+QVariant CSVTableRepresentation::getData(int row, int column)
+{    
+    if (this->header[column].type == CellType::TypeEnum)
+    {
+        return this->header[column].data[data[row][column].toInt()];
+    }
+    else
+        return this->data[row][column];
 }

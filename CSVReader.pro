@@ -19,14 +19,16 @@ SOURCES += main.cpp\
     csvtablerepresentation.cpp \
     csvmodel.cpp \
     comboboxdelegate.cpp \
-    spinboxdelegate.cpp
+    spinboxdelegate.cpp \
+    textboxdelegate.cpp
 
 HEADERS  += csvreadermainwindow.h \     
     csvreader.h \
     csvtablerepresentation.h \
     csvmodel.h \
     comboboxdelegate.h \
-    spinboxdelegate.h
+    spinboxdelegate.h \
+    textboxdelegate.h
 
 FORMS    += csvreadermainwindow.ui \
     csvreader.ui
