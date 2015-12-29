@@ -76,6 +76,7 @@ CSVTableRepresentation* CSVTableRepresentation::LoadFromFile(QString fname)
             cell.defaultValue = 0;
         }
         repr -> header.push_back(cell);
+        repr->fname = fname;
     }
 
     int line_num = 0;

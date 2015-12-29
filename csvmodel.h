@@ -17,16 +17,22 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     Qt::ItemFlags flags(const QModelIndex &index) const;
     void SetColumnToAdd(CellTypeData toAdd);
+    Qt::DropActions supportedDropActions() const;
+
 
     bool insertRow(int row, const QModelIndex &parent);
     bool insertRows(int row, int count, const QModelIndex &parent);
     bool removeRow(int row, const QModelIndex &parent);
     bool removeRows(int row, int count, const QModelIndex &parent);
+    bool moveRow(const QModelIndex &sourceParent, int sourceRow, const QModelIndex &destinationParent, int destinationChild);
+    bool moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationChild);
 
     bool insertColumn(int column, const QModelIndex &parent);
     bool insertColumns(int column, int count, const QModelIndex &parent);
     bool removeColumn(int column, const QModelIndex &parent);
     bool removeColumns(int column, int count, const QModelIndex &parent);
+    bool moveColumn(const QModelIndex &sourceParent, int sourceColumn, const QModelIndex &destinationParent, int destinationChild);
+    bool moveColumns(const QModelIndex &sourceParent, int sourceColumn, int count, const QModelIndex &destinationParent, int destinationChild);
 
     bool setData(const QModelIndex &index, const QVariant &value, int role);    
 

@@ -9,6 +9,7 @@ QT       += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
+TRANSLATIONS += csv_reader_ru.ts
 
 TARGET = CSVReader
 TEMPLATE = app

@@ -40,6 +40,7 @@ public:
 
     std::vector<CellTypeData> header;
     std::vector<std::vector<QVariant>> data;
+    QString fname;
 
     friend class CSVModel;    
 };

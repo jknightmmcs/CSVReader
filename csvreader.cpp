@@ -4,6 +4,7 @@
 #include <spinboxdelegate.h>
 #include <textboxdelegate.h>
 #include <addcolumndialog.h>
+#include <QMessageBox>
 #include <algorithm>
 
 void CSVReader::SetDelegates()
@@ -45,6 +46,13 @@ CSVReader::CSVReader(CSVModel* model, QWidget *parent) :
     ui->tableView->setModel(model);            
 
     SetDelegates();
+
+    ui->tableView->setDragEnabled(true);
+    ui->tableView->setDropIndicatorShown(true);
+    ui->tableView->viewport()->setAcceptDrops(true);
+    ui->tableView->setDefaultDropAction(Qt::MoveAction);
+    ui->tableView->verticalHeader()->setDragDropMode(QAbstractItemView::InternalMove);
+    ui->tableView->verticalHeader()->setSectionsMovable(true);
     ui->tableView->resizeColumnsToContents();    
 
 }
@@ -130,5 +138,14 @@ void CSVReader::on_actionLeft_triggered()
         else
             model->insertColumn(selected[0].column(), selected[0]);
         SetDelegates();
+    }
+}
+
+void CSVReader::closeEvent(QCloseEvent *)
+{
+    if (QMessageBox::question(this, tr("Changes confirmation"), tr("Save file?"),
+                                       QMessageBox::Yes|QMessageBox::No) == QMessageBox::Yes)
+    {
+        //TODO
     }
 }

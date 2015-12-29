@@ -20,6 +20,7 @@ public:
     void SetDelegate(int i, CSVTableRepresentation* repr);
 
     void SetDelegates();
+    void closeEvent(QCloseEvent *);
 public slots:
     void addColumn(CellTypeData data);
 

@@ -86,12 +86,17 @@ Qt::ItemFlags CSVModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
         return Qt::ItemIsEnabled;
-    return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
+    return QAbstractItemModel::flags(index) | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
 }
 
 void CSVModel::SetColumnToAdd(CellTypeData toAdd)
 {
     columnToAdd = toAdd;
+}
+
+Qt::DropActions CSVModel::supportedDropActions() const
+{
+    return /*Qt::CopyAction | */Qt::MoveAction;
 }
 
 bool CSVModel::insertRow(int row, const QModelIndex &parent)
@@ -133,6 +138,31 @@ bool CSVModel::removeRows(int row, int count, const QModelIndex &parent)
     return true;
 }
 
+template<class T>
+void move_range(size_t start, size_t length, size_t dst, std::vector<T> & v)
+{
+  const size_t final_dst = dst > start ? dst - length : dst;
+
+  std::vector<T> tmp(v.begin() + start, v.begin() + start + length);
+  v.erase(v.begin() + start, v.begin() + start + length);
+  v.insert(v.begin() + final_dst, tmp.begin(), tmp.end());
+}
+
+bool CSVModel::moveRow(const QModelIndex &sourceParent, int sourceRow, const QModelIndex &destinationParent, int destinationChild)
+{
+    return moveRows(sourceParent, sourceRow, 1, destinationParent, destinationChild);
+}
+
+bool CSVModel::moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationChild)
+{
+    beginMoveRows(sourceParent, sourceRow, sourceRow + count - 1, destinationParent, destinationParent.row());
+    move_range(sourceRow, count, destinationParent.row(), repr_->data);
+    endMoveRows();
+    emit dataChanged(index(0, 0), index(rowCount(sourceParent), columnCount(sourceParent)));
+    emit layoutChanged();
+    return true;
+}
+
 bool CSVModel::insertColumn(int column, const QModelIndex &parent)
 {
     return insertColumns(column, 1, parent);
@@ -168,6 +198,21 @@ bool CSVModel::removeColumns(int column, int count, const QModelIndex &parent)
         repr_->data[i].erase(repr_->data[i].begin() + column, repr_->data[i].begin() + column + count);
     endRemoveColumns();
     emit dataChanged(index(0, 0), index(rowCount(parent), columnCount(parent)));
+    emit layoutChanged();
+    return true;
+}
+
+bool CSVModel::moveColumn(const QModelIndex &sourceParent, int sourceColumn, const QModelIndex &destinationParent, int destinationChild)
+{
+    return moveColumns(sourceParent, sourceColumn, 1, destinationParent, destinationChild);
+}
+
+bool CSVModel::moveColumns(const QModelIndex &sourceParent, int sourceColumn, int count, const QModelIndex &destinationParent, int destinationChild)
+{
+    beginMoveColumns(sourceParent, sourceColumn, sourceColumn + count - 1, destinationParent, destinationParent.column());
+    //implementation needed;
+    endMoveColumns();
+    emit dataChanged(index(0, 0), index(rowCount(sourceParent), columnCount(sourceParent)));
     emit layoutChanged();
     return true;
 }
