@@ -5,6 +5,7 @@
 #include <textboxdelegate.h>
 #include <addcolumndialog.h>
 #include <QMessageBox>
+#include <QKeyEvent>
 #include <algorithm>
 
 void CSVReader::SetDelegates()
@@ -47,12 +48,8 @@ CSVReader::CSVReader(CSVModel* model, QWidget *parent) :
 
     SetDelegates();
 
-    ui->tableView->setDragEnabled(true);
-    ui->tableView->setDropIndicatorShown(true);
-    ui->tableView->viewport()->setAcceptDrops(true);
-    ui->tableView->setDefaultDropAction(Qt::MoveAction);
-    ui->tableView->verticalHeader()->setDragDropMode(QAbstractItemView::InternalMove);
-    ui->tableView->verticalHeader()->setSectionsMovable(true);
+    ui->tableView->installEventFilter(this);
+
     ui->tableView->resizeColumnsToContents();    
 
 }
@@ -123,6 +120,78 @@ void CSVReader::on_actionRight_triggered()
     }
 }
 
+bool CSVReader::handleCopyEvent()
+{
+    auto selected = ui->tableView->selectionModel()->selectedRows();
+    if (selected.size() != 0)
+    {
+        isCopy = true;
+        rowCopyPaste = selected[0];
+        copyPasteCount = selected.size();
+        ui->tableView->clearSelection();
+    }
+    return true;
+}
+
+bool CSVReader::handleCutEvent()
+{
+    auto selected = ui->tableView->selectionModel()->selectedRows();
+    if (selected.size() != 0)
+    {
+        isCopy = false;
+        for(int i = 0; i < selected.size(); i++)
+        {
+            ui->tableView->setRowHidden(selected[i].row(), true);
+        }
+        rowCopyPaste = selected[0];
+        copyPasteCount = selected.size();
+        ui->tableView->clearSelection();
+    }
+    return true;
+}
+
+bool CSVReader::handlePasteEvent()
+{
+    if (copyPasteCount != 0)
+    {
+        auto selection = ui->tableView->selectionModel()->selectedRows();
+        if (selection.size() > 0)
+        {
+            auto selected = selection[0];
+            if (!isCopy)
+            {
+                model->moveRows(rowCopyPaste, rowCopyPaste.row(), copyPasteCount, selected, 0 /* UNUSED */);
+                for(int i = 0; i < copyPasteCount; i++)
+                {
+                    ui->tableView->setRowHidden(i + rowCopyPaste.row(), false);
+                }
+            }
+            else
+            {
+                model->copyRows(rowCopyPaste.row(), copyPasteCount, selected.row(), selected);
+            }
+            copyPasteCount = 0;
+            ui->tableView->clearSelection();
+        }
+    }
+    return true;
+}
+
+bool CSVReader::eventFilter(QObject * object, QEvent *event)
+{
+    if (object == ui->tableView && event->type() == QEvent::KeyPress)
+    {
+        QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+        if (keyEvent -> key() == Qt::Key_C && keyEvent->modifiers().testFlag(Qt::ControlModifier))
+            return handleCopyEvent();
+        if (keyEvent -> key() == Qt::Key_X && keyEvent->modifiers().testFlag(Qt::ControlModifier))
+            return handleCutEvent();
+        if (keyEvent -> key() == Qt::Key_V && keyEvent->modifiers().testFlag(Qt::ControlModifier))
+            return handlePasteEvent();
+    }
+    return false;
+}
+
 void CSVReader::on_actionLeft_triggered()
 {
     AddColumnDialog dialog;
@@ -146,6 +215,6 @@ void CSVReader::closeEvent(QCloseEvent *)
     if (QMessageBox::question(this, tr("Changes confirmation"), tr("Save file?"),
                                        QMessageBox::Yes|QMessageBox::No) == QMessageBox::Yes)
     {
-        //TODO
+        model->getRepresentation()->Save();
     }
 }

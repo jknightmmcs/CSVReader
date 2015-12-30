@@ -17,10 +17,6 @@ public:
     explicit CSVReader(CSVModel *model, QWidget *parent = 0);
     ~CSVReader();
 
-    void SetDelegate(int i, CSVTableRepresentation* repr);
-
-    void SetDelegates();
-    void closeEvent(QCloseEvent *);
 public slots:
     void addColumn(CellTypeData data);
 
@@ -38,9 +34,23 @@ private slots:
     void on_actionRight_triggered();
 
 private:
+
+
+    void SetDelegate(int i, CSVTableRepresentation* repr);
+
+    void SetDelegates();
+    void closeEvent(QCloseEvent *);
+    bool eventFilter(QObject *object, QEvent *event);
+    bool handleCopyEvent();
+    bool handleCutEvent();
+    bool handlePasteEvent();
+
     Ui::CSVReader *ui;    
     CSVModel* model;
     CellTypeData ColumnToAdd;
+    QModelIndex rowCopyPaste;
+    int copyPasteCount;
+    bool isCopy;
 };
 
 #endif // CSVREADER_H

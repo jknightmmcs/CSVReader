@@ -103,3 +103,53 @@ QVariant CSVTableRepresentation::getData(int row, int column)
     else
         return this->data[row][column];
 }
+
+void CSVTableRepresentation::Save()
+{
+    QFile f(this->fname);
+    f.open(QIODevice::WriteOnly);
+    QTextStream sf(&f);
+
+    QStringList headerList;
+    for(int i = 0; i < this->header.size(); i++)
+    {
+        switch (this->header[i].type)
+        {
+        case CellType::TypeBool:
+            headerList.push_back("bool");
+            break;
+        case CellType::TypeInt:
+            headerList.push_back("int");
+            break;
+        case CellType::TypeString:
+            headerList.push_back("string");
+            break;
+        case CellType::TypeEnum:
+            QStringList enumList;
+            enumList.push_back("enum");
+            for(int j = 0; j < header[i].data.size(); j++)
+                enumList.push_back(header[i].data[j]);
+            QString str = enumList.join(":");
+            headerList.push_back(str);
+            break;
+        }
+    }
+    sf << headerList.join(";") << endl;
+
+    for(int i = 0; i < this->data.size(); i++)
+    {
+        QStringList list;
+        for(int j = 0; j < this->header.size(); j++)
+        {
+            if (this->header[j].type != CellType::TypeEnum)
+            {
+                list.push_back(this->data[i][j].toString());
+            }
+            else
+            {
+                list.push_back(this->header[j].data[this->data[i][j].toInt()]);
+            }
+        }
+        sf << list.join(";") << endl;
+    }
+}

@@ -38,6 +38,7 @@ public:
     static CSVTableRepresentation *LoadFromFile(QString fname);
     QVariant getData(int row, int column);
 
+    void Save();
     std::vector<CellTypeData> header;
     std::vector<std::vector<QVariant>> data;
     QString fname;
